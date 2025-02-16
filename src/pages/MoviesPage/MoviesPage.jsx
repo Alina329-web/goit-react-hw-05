@@ -1,45 +1,53 @@
-import React, { useState } from 'react';
-import axios from 'axios';
+import { useState, useEffect } from 'react';
+import { searchMovies } from '../../app';
 import MovieList from '../../components/MovieList/MovieList';
+import { useSearchParams } from 'react-router-dom';
 import styles from './MoviesPage.module.css';
 
 const MoviesPage = () => {
-  const [query, setQuery] = useState('');
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [query, setQuery] = useState(searchParams.get('q') || '');
   const [movies, setMovies] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
 
-  const handleSearch = async e => {
+  useEffect(() => {
+    updateSearchParams('q', query);
+    if (!query) return;
+
+    let isCancelled = false;
+    setIsLoading(true);
+
+    searchMovies(query)
+      .then(data => {
+        if (!isCancelled) setMovies(data);
+      })
+      .finally(() => {
+        if (!isCancelled) setIsLoading(false);
+      });
+
+    return () => {
+      isCancelled = true;
+    };
+  }, [query]);
+
+  const handleSearch = e => {
     e.preventDefault();
-    if (query.trim() === '') return;
-    const response = await axios.get(
-      `https://api.themoviedb.org/3/search/movie?query=${query}`,
-      {
-        headers: {
-          Authorization:
-            'Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiIxOTFmY2MxMmMyNmE4NDQ5ZWMwNjEzM2IzMDY5MTNmNCIsIm5iZiI6MTczOTYyMzQ1NC4zODgsInN1YiI6IjY3YjA4YzFlZGRiYzY0Y2M5MTM2MjFmYiIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.C8WxW6EbHGYahHI5Pph5F1spQCfIUFGCIEEhoOqMeOQ',
-        },
-      }
-    );
+  };
 
-    setMovies(response.data.results);
+  const updateSearchParams = (key, value) => {
+    const updatedParams = new URLSearchParams(searchParams);
+    updatedParams.set(key, value);
+    setSearchParams(updatedParams);
   };
 
   return (
-    <div className={styles.moviesPage}>
-      <form onSubmit={handleSearch} className={styles.form}>
-        <input
-          type="text"
-          value={query}
-          onChange={e => setQuery(e.target.value)}
-          placeholder="Search movies"
-          className={styles.input}
-        />
-        <button type="submit" className={styles.button}>
-          Search
-        </button>
+    <>
+      <form onSubmit={handleSearch}>
+        <input value={query} onChange={e => setQuery(e.target.value)} />
+        <button type="submit">Search</button>
       </form>
-      <MovieList movies={movies} />
-    </div>
+      <MovieList movies={movies} isLoading={isLoading} />
+    </>
   );
 };
-
 export default MoviesPage;

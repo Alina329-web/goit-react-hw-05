@@ -1,54 +1,54 @@
-import React, { useEffect, useState } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import { useEffect, useState } from 'react';
+import { useParams, Link, Outlet } from 'react-router-dom';
+import { fetchMovieDetails } from '../../app';
+import BackButton from '../../components/BackButton/BackButton';
 import styles from './MovieDetailsPage.module.css';
 
-const MovieDetailsPage = () => {
+function MovieDetailsPage() {
   const { movieId } = useParams();
-  const navigate = useNavigate(); // useNavigate замість useHistory
   const [movie, setMovie] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
-    const fetchMovieDetails = async () => {
-      try {
-        const response = await axios.get(
-          `https://api.themoviedb.org/3/movie/${movieId}`,
-          {
-            headers: {
-              Authorization:
-                'Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiIxOTFmY2MxMmMyNmE4NDQ5ZWMwNjEzM2IzMDY5MTNmNCIsIm5iZiI6MTczOTYyMzQ1NC4zODgsInN1YiI6IjY3YjA4YzFlZGRiYzY0Y2M5MTM2MjFmYiIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.C8WxW6EbHGYahHI5Pph5F1spQCfIUFGCIEEhoOqMeOQ',
-            },
-          }
-        );
-
-        setMovie(response.data);
-      } catch (error) {
-        console.error('Error fetching movie details:', error);
-      }
-    };
-
-    fetchMovieDetails();
+    setIsLoading(true);
+    fetchMovieDetails(movieId)
+      .then(setMovie)
+      .then(() => setIsLoading(false));
   }, [movieId]);
+  if (isLoading) {
+    return <p>Loading...</p>;
+  }
+  return movie ? (
+    <div>
+      <BackButton />
+      <div className={styles.divMovies}>
+        <img
+          className={styles.imgMovie}
+          src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`}
+        />
+        <h1>{movie.title}</h1>
+        <p>Score:{Math.round(movie.vote_average * 10)}%</p>
+        <p className={styles.descriptionMovie}>{movie.overview}</p>
+        <ul className={styles.genresList}>
+          {movie.genres.map(genre => (
+            <li key={genre.id}>{genre.name}</li>
+          ))}
+        </ul>
+      </div>
 
-  if (!movie) return <div>Loading...</div>;
-
-  return (
-    <div className={styles.movieDetails}>
-      <h1>{movie.title}</h1>
-      <img
-        src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`}
-        alt={movie.title}
-        className={styles.poster}
-      />
-      <p>{movie.overview}</p>
-      <button
-        onClick={() => navigate(-1)} // Використовуємо navigate для переходу назад
-        className={styles.goBack}
-      >
-        Go Back
-      </button>
+      <div className={styles.divLink}>
+        <Link className={styles.link} to={`cast`}>
+          Check actors
+        </Link>
+        <Link className={styles.link} to={`reviews`}>
+          Check reviews
+        </Link>
+      </div>
+      <Outlet />
     </div>
+  ) : (
+    <p>Not found</p>
   );
-};
+}
 
 export default MovieDetailsPage;

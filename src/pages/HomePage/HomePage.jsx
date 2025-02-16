@@ -1,32 +1,24 @@
 import React, { useEffect, useState } from 'react';
-import axios from 'axios';
+import { fetchTrendingMovies } from '../../app';
 import MovieList from '../../components/MovieList/MovieList';
 import styles from './HomePage.module.css';
 
 const HomePage = () => {
   const [movies, setMovies] = useState([]);
-
+  const [isLoading, setIsLoading] = useState(false);
   useEffect(() => {
-    const fetchTrendingMovies = async () => {
-      const response = await axios.get(
-        'https://api.themoviedb.org/3/trending/movie/day',
-        {
-          headers: {
-            Authorization:
-              'Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiIxOTFmY2MxMmMyNmE4NDQ5ZWMwNjEzM2IzMDY5MTNmNCIsIm5iZiI6MTczOTYyMzQ1NC4zODgsInN1YiI6IjY3YjA4YzFlZGRiYzY0Y2M5MTM2MjFmYiIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.C8WxW6EbHGYahHI5Pph5F1spQCfIUFGCIEEhoOqMeOQ',
-          },
-        }
-      );
-      setMovies(response.data.results);
-    };
-
-    fetchTrendingMovies();
+    setIsLoading(true);
+    fetchTrendingMovies()
+      .then(setMovies)
+      .then(() => {
+        setIsLoading(false);
+      });
   }, []);
 
   return (
     <div className={styles.homePage}>
       <h1>Trending Movies</h1>
-      <MovieList movies={movies} />
+      <MovieList movies={movies} isLoading={isLoading} />
     </div>
   );
 };

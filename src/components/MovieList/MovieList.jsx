@@ -1,28 +1,34 @@
 // src/components/MovieList/MovieList.jsx
 import React from 'react';
+import { useLocation } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import styles from './MovieList.module.css';
 
-const MovieList = ({ movies }) => {
+const MovieList = ({ movies, isLoading }) => {
+  const location = useLocation();
+  if (isLoading) {
+    return <p>Loading...</p>;
+  }
   return (
-    <ul className={styles.movieList}>
-      {movies.map(movie => (
-        <li key={movie.id} className={styles.movieItem}>
-          {/* <img
-            src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`}
-            alt={movie.title}
-            className={styles.moviePoster}
-          /> */}
-          <Link
-            className={styles.link}
-            to={`/movies/${id}`}
-            state={{ from: location }}
-          >
-            {movie.title}
-          </Link>
-          {/* <h3>{movie.title}</h3> */}
-        </li>
-      ))}
-    </ul>
+    <>
+      {movies.length > 0 ? (
+        <ul className={styles.movieList}>
+          {movies.map(movie => (
+            <li key={movie.id} className={styles.movieItem}>
+              <Link
+                className={styles.link}
+                to={`/movies/${movie.id}`}
+                state={{ from: location }}
+              >
+                {movie.title}
+              </Link>
+            </li>
+          ))}
+        </ul>
+      ) : (
+        <p>No movies</p>
+      )}
+    </>
   );
 };
 
