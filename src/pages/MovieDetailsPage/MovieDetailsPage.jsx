@@ -37,12 +37,19 @@ function MovieDetailsPage() {
       </div>
 
       <div className={styles.divLink}>
-        <Link className={styles.link} to={`cast`}>
-          Check actors
-        </Link>
-        <Link className={styles.link} to={`reviews`}>
-          Check reviews
-        </Link>
+        <h3 className={styles.divh}>Additional information</h3>
+        <ul className={styles.divList}>
+          <li className={styles.divItem}>
+            <Link className={styles.link} to={`cast`}>
+              Cast
+            </Link>
+          </li>
+          <li className={styles.divItem}>
+            <Link className={styles.link} to={`reviews`}>
+              Reviews
+            </Link>
+          </li>
+        </ul>
       </div>
       <Outlet />
     </div>

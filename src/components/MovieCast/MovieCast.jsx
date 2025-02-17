@@ -23,7 +23,7 @@ function MovieCast() {
     <div>
       <h2>Actors</h2>
       {cast.length > 0 ? (
-        <ul>
+        <ul className={styles.actorList}>
           {cast.map(actor => (
             <li key={actor.id}>
               <img

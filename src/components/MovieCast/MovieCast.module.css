@@ -1,0 +1,13 @@
+.actorList {
+  list-style-type: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+.actor {
+  width: 300px;
+}
+h3,
+p {
+  text-align: center;
+}

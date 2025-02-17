@@ -1,0 +1,19 @@
+.divMovies {
+  display: block;
+}
+.imgMovie {
+  width: 300px;
+  float: left;
+  margin-right: 25px;
+  margin-left: 25px;
+}
+.descriptionMovie {
+  text-align: justify;
+}
+.divLink {
+  display: block;
+  margin-top: 140px;
+}
+.divh {
+  text-align: left;
+}

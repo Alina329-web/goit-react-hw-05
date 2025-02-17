@@ -13,13 +13,13 @@ function MovieReviews() {
 
   return (
     <div>
-      <h2>Review</h2>
+      <h2>Reviews</h2>
       {reviews.length > 0 ? (
-        <ul>
+        <ul className="reviewsList">
           {reviews.map(review => (
             <li key={review.id}>
               <h3>{review.author}</h3>
-              <p>{review.content}</p>
+              <p className="reviewsText">{review.content}</p>
             </li>
           ))}
         </ul>

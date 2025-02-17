@@ -43,8 +43,14 @@ const MoviesPage = () => {
   return (
     <>
       <form onSubmit={handleSearch}>
-        <input value={query} onChange={e => setQuery(e.target.value)} />
-        <button type="submit">Search</button>
+        <input
+          className="moviesInput"
+          value={query}
+          onChange={e => setQuery(e.target.value)}
+        />
+        <button className="moviesButton" type="submit">
+          Search
+        </button>
       </form>
       <MovieList movies={movies} isLoading={isLoading} />
     </>
