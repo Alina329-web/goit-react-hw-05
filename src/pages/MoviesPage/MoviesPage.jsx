@@ -9,15 +9,16 @@ const MoviesPage = () => {
   const [query, setQuery] = useState(searchParams.get('q') || '');
   const [movies, setMovies] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [submittedQuery, setSubmittedQuery] = useState(query);
 
   useEffect(() => {
-    updateSearchParams('q', query);
-    if (!query) return;
+    updateSearchParams('q', submittedQuery);
+    if (!submittedQuery) return;
 
     let isCancelled = false;
     setIsLoading(true);
 
-    searchMovies(query)
+    searchMovies(submittedQuery)
       .then(data => {
         if (!isCancelled) setMovies(data);
       })
@@ -28,10 +29,11 @@ const MoviesPage = () => {
     return () => {
       isCancelled = true;
     };
-  }, [query]);
+  }, [submittedQuery]);
 
   const handleSearch = e => {
     e.preventDefault();
+    setSubmittedQuery(query);
   };
 
   const updateSearchParams = (key, value) => {
